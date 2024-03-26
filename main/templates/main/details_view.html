@@ -1,0 +1,18 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+{{task.title}}
+{% endblock %}
+
+{% block content %}
+    <div class="features">
+        <h1>{{ task.title }}</h1>
+        <p>{{ task.task }}</p>
+        <p>{{ task.author }}</p>
+        <p>{{ task.date_posted|date:"F d, Y" }}</p>
+        {% if request.user == task.author %}
+            <a href="{% url 'tasks-delete' task.id %}" class="btn btn-danger">Delete task</a>
+            <a href="{% url 'tasks-update' task.id %}" class="btn btn-info">Update task</a>
+        {% endif %}
+    </div>
+{% endblock %}

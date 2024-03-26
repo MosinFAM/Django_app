@@ -1,0 +1,16 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+Delete task
+{% endblock %}
+
+{% block content %}
+<div class="features">
+    <h1>Delete task</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Delete task</button>
+        <a href="{% url 'tasks-detail' task.id %}" class="btn btn-info">Cansel</a>
+    </form>
+</div>
+{% endblock %}

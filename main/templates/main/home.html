@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+{{title}}
+{% endblock %}
+
+{% block content %}
+    <h1>Home page</h1>
+    {% if tasks %}
+        {% for el in tasks %}
+            <div class="alert alert-warning mt-2">
+                {% comment %} <img class="rounded-circle article-img" src="{{ el.author.profile.image.url }}"> {% endcomment %}
+                <small class="mr-2" href="#">{{ el.author }}</small>
+                <small class="text-muted">{{el.date_posted|date:"F d, Y"}}</small>
+                <h2><a class="article-title" href="{% url 'tasks-detail' el.id %}">{{el.title}}</a></h3>
+                <p>{{el.task}}</p>
+                
+                <a href="{% url 'tasks-detail' el.id %}" class="btn btn-warning">read more</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no tasks</p>
+    {% endif %}
+{% endblock %}
