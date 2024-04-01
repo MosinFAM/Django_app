@@ -1,7 +1,7 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
-from main.forms import TaskForm
-from main.models import Task
+from main.forms import TaskForm, CommentForm
+from main.models import Task, Comment
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView, ListView, DetailView, CreateView, DeleteView
 from django.urls import reverse_lazy
@@ -100,15 +100,21 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'main/task_update.html'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author = self.request.user 
+        is_solved = self.request.POST.get('is_solved', False)
+        if is_solved:
+            form.instance.is_solved = True
+        else:
+            form.instance.is_solved = False
         return super().form_valid(form)
+
 
     def test_func(self):
         task = self.get_object()
         if self.request.user == task.author:
             return True
         return False
-
+    
 
 # def deleteview(request, pk):
 #     task = Task.objects.get(pk=pk)
@@ -123,15 +129,78 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 #     return render(request, 'main/task_delete.html', context=context)
 
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Task
     success_url = reverse_lazy('home')
 
     template_name = 'main/task_delete.html'
  
     def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
+        task = self.get_object()
+        if self.request.user == task.author:
             return True
         return False
      
+    
+
+class CommentCreateView(LoginRequiredMixin, CreateView): 
+    model = Comment 
+    form_class = CommentForm 
+    template_name = 'main/comment_add.html' 
+ 
+    def form_valid(self, form): 
+        task_id = self.kwargs.get('pk') 
+        task = Task.objects.get(id=task_id) 
+        form.instance.task = task 
+        form.instance.author = self.request.user 
+        return super().form_valid(form)  
+    
+ 
+    def get_success_url(self): 
+        task_id = self.kwargs.get('pk') 
+        return reverse_lazy('tasks-detail', kwargs={'pk': task_id})
+    
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'main/comment_update.html'
+
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user == task.author:
+            return True
+        return False
+
+    def get_success_url(self): 
+        comment_id = self.kwargs.get('pk') 
+        comment = Comment.objects.get(pk=comment_id)
+        task_id = comment.task_id
+
+        return reverse_lazy('tasks-detail', kwargs={'pk': task_id})
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'main/comment_delete.html'
+
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user == task.author:
+            return True
+        return False
+
+    def get_success_url(self): 
+        comment_id = self.kwargs.get('pk') 
+        comment = Comment.objects.get(pk=comment_id)
+        task_id = comment.task_id
+
+        return reverse_lazy('tasks-detail', kwargs={'pk': task_id})
+

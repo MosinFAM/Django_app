@@ -5,7 +5,10 @@ from main.views import (
     TaskCreateView, 
     TaskDetailView, 
     TaskUpdateView, 
-    PostDeleteView
+    TaskDeleteView,
+    CommentCreateView,
+    CommentUpdateView,
+    CommentDeleteView
 )
 
 urlpatterns = [
@@ -14,5 +17,8 @@ urlpatterns = [
     path('create', TaskCreateView.as_view(), name='create'),
     path('task/<int:pk>', TaskDetailView.as_view(), name='tasks-detail'),
     path('task/<int:pk>/update', TaskUpdateView.as_view(), name='tasks-update'),
-    path('task/<int:pk>/delete', PostDeleteView.as_view(), name='tasks-delete'),
+    path('task/<int:pk>/delete', TaskDeleteView.as_view(), name='tasks-delete'),
+    path('task/<int:pk>/comment', CommentCreateView.as_view(), name='comment'),
+    path('update_comment/<int:pk>', CommentUpdateView.as_view(), name='comment-update'), 
+    path('delete_comment/<int:pk>', CommentDeleteView.as_view(), name='comment-delete'),
 ]

@@ -6,13 +6,39 @@
 
 {% block content %}
     <div class="features">
+        <p>{{ task.author}} {{task.date_posted|date:"F d, Y"  }}</p>
         <h1>{{ task.title }}</h1>
-        <p>{{ task.task }}</p>
-        <p>{{ task.author }}</p>
-        <p>{{ task.date_posted|date:"F d, Y" }}</p>
+        <p>{{ task.task|linebreaksbr }}</p>
+        <br/><br/>
+        {% if task.is_solved %}
+            <p><strong>This task is solved!</strong></p>
+        {% endif %}
+        <hr>
+        <h4>Comments:</h4>
+        {% if not task.comments.all %}
+            No Comments Yet...<a href="{% url 'comment' task.pk %}">Add One</a>
+        {% else %}
+            <a href="{% url 'comment' task.pk %}">Add Comment</a>
+            <br/><br/>
+            {% for comment in task.comments.all %}
+                <strong>
+                    {{ comment.author}} - {{ comment.created_at}} - {{ comment.pk }}
+                </strong>
+                </br><br/>
+                {{ comment.text }}
+                {% if request.user == comment.author %}
+                    </br><br/>
+                    <a href="{% url 'comment-delete' comment.id %}">Delete</a>
+                    <a href="{% url 'comment-update' comment.id %}">Update</a> 
+                {% endif %}
+                <hr>
+            {% endfor %}
+        {% endif %}
+        </br><br/></br><br/>
         {% if request.user == task.author %}
             <a href="{% url 'tasks-delete' task.id %}" class="btn btn-danger">Delete task</a>
             <a href="{% url 'tasks-update' task.id %}" class="btn btn-info">Update task</a>
         {% endif %}
     </div>
 {% endblock %}
+

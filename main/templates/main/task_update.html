@@ -12,6 +12,8 @@ Update task
     {{ form.task }}<br>
     <button type="submit" class="btn btn-success">Add</button>
     <a href="{% url 'tasks-detail' task.id %}" class="btn btn-info">Cansel</a>
+    <input type="checkbox" name="is_solved" {% if task.is_solved %} checked {% endif %}>
+    <label for="is_solved">Mark as solved</label>
     <span>{{ error }}</span>
 </form>
 {% endblock %}
