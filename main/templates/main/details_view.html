@@ -21,17 +21,34 @@
             <a href="{% url 'comment' task.pk %}">Add Comment</a>
             <br/><br/>
             {% for comment in task.comments.all %}
-                <strong>
-                    {{ comment.author}} - {{ comment.created_at}} - {{ comment.pk }}
-                </strong>
-                </br><br/>
-                {{ comment.text }}
-                {% if request.user == comment.author %}
+                {% if comment.is_pinned %}
+                    <strong>
+                        {{ comment.author}} - {{ comment.created_at}} - {{ comment.pk }}
+                    </strong>
+                    <span>(Pinned)</span>
                     </br><br/>
-                    <a href="{% url 'comment-delete' comment.id %}">Delete</a>
-                    <a href="{% url 'comment-update' comment.id %}">Update</a> 
+                    {{ comment.text }}
+                    <hr>
                 {% endif %}
-                <hr>
+            {% endfor %}
+            {% for comment in task.comments.all %}
+                {% if not comment.is_pinned %}
+                    <strong>
+                        {{ comment.author}} - {{ comment.created_at}} - {{ comment.pk }}
+                    </strong>
+                    </br><br/>
+                    {{ comment.text }}
+                    {% if request.user == comment.author %}
+                        </br><br/>
+                        <a href="{% url 'comment-delete' comment.id %}">Delete</a>
+                        <a href="{% url 'comment-update' comment.id %}">Update</a> 
+                    {% endif %}
+                    {% if request.user == task.author %}
+                        </br>
+                        <a href="{% url 'pin-comment' task.id comment.id %}">Pin Comment</a>
+                    {% endif %}
+                    <hr>
+                {% endif %}
             {% endfor %}
         {% endif %}
         </br><br/></br><br/>

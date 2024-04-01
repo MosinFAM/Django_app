@@ -13,7 +13,7 @@
                 <small class="mr-2" href="#">{{ el.author }}</small>
                 <small class="text-muted">{{el.date_posted|date:"F d, Y"}}</small>
                 <h2><a class="article-title" href="{% url 'tasks-detail' el.id %}">{{el.title}}</a></h3>
-                <p>{{el.task}}</p>
+                <p>{{el.task|linebreaksbr}}</p>
                 
                 <a href="{% url 'tasks-detail' el.id %}" class="btn btn-warning">read more</a>
             </div>

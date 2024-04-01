@@ -28,7 +28,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
-    # is_pinned = models.BooleanField(default=False)
+    is_pinned = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s - %s' % (self.task.title, self.author)
@@ -36,3 +36,4 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Коммантарий'
         verbose_name_plural = 'Коммантарии'
+        ordering = ['-created_at']

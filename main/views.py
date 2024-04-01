@@ -1,10 +1,12 @@
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views import View
 from main.forms import TaskForm, CommentForm
 from main.models import Task, Comment
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView, ListView, DetailView, CreateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
 
 
 # def home(request):
@@ -204,3 +206,26 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
         return reverse_lazy('tasks-detail', kwargs={'pk': task_id})
 
+
+
+@login_required
+def pin_comment(request, task_id, comment_id):
+    task = get_object_or_404(Task, id=task_id)
+    comment = get_object_or_404(Comment, id=comment_id, task=task)
+
+    if task.author != request.user:
+        return redirect('home')  # Перенаправляем пользователя, если он не является владельцем задачи
+
+    # Снимаем закрепление со всех комментариев задачи
+    for task_comment in task.comments.all():
+        task_comment.is_pinned = False
+        task_comment.save()
+
+    # Закрепляем выбранный комментарий
+    comment.is_pinned = True
+    comment.save()
+
+    return redirect('tasks-detail', pk=task_id)
+    
+
+    

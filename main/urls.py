@@ -8,7 +8,8 @@ from main.views import (
     TaskDeleteView,
     CommentCreateView,
     CommentUpdateView,
-    CommentDeleteView
+    CommentDeleteView,
+    pin_comment
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('task/<int:pk>/comment', CommentCreateView.as_view(), name='comment'),
     path('update_comment/<int:pk>', CommentUpdateView.as_view(), name='comment-update'), 
     path('delete_comment/<int:pk>', CommentDeleteView.as_view(), name='comment-delete'),
+    path('pin-comment/<int:task_id>/<int:comment_id>/', pin_comment, name='pin-comment'),
 ]
