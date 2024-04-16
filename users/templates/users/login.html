@@ -13,6 +13,12 @@
             </div>
         </form>
     </form>
+    <hr>
+    <body>
+        {% load socialaccount %}
+        <legend class="border-bottom mb-4">Google login</legend>
+        <a href="{% provider_login_url 'google' %}?next=/">Login With Google</a>
+    </body>
     <div class="border-top pt-3">
         <small class="text-muted">
             Need An Account? <a class="ml-2" href="{% url 'register' %}">Sign Up Now</a>
